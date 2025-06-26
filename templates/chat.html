@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMILEY Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .chat-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: 400px;
+            overflow-y: auto;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .bot-message {
+            background-color: #e3f2fd;
+            margin-right: 20%;
+        }
+        .user-message {
+            background-color: #f3e5f5;
+            margin-left: 20%;
+            text-align: right;
+        }
+        .input-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1976d2;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>SMILEY Chatbot</h1>
+    <div class="chat-container" id="chat-container">
+        <div class="message bot-message loading" id="initial-message">Loading...</div>
+    </div>
+    <div class="input-container">
+        <input type="text" id="user-input" placeholder="Type your message..." disabled>
+        <button onclick="sendMessage()" id="send-button" disabled>Send</button>
+        <button onclick="resetChat()">Reset</button>
+    </div>
+
+    <script>
+        let isWaitingForResponse = false;
+        let autoSequenceIndex = 0;
+        let autoSequenceMessages = [];
+
+        // Initialize chat when page loads
+        window.onload = function() {
+            getInitialMessage();
+        };
+
+        // Get initial message
+        async function getInitialMessage() {
+            try {
+                const response = await fetch('/init', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayMessage(data.response, 'bot');
+                    enableInput();
+                } else {
+                    displayMessage('Error: ' + data.error, 'bot');
+                }
+            } catch (error) {
+                displayMessage('Error connecting to server', 'bot');
+            }
+        }
+
+        // Send message
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            
+            if (!message || isWaitingForResponse) return;
+            
+            displayMessage(message, 'user');
+            input.value = '';
+            isWaitingForResponse = true;
+            disableInput();
+            
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_input: message })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.type === 'sequence') {
+                        // Handle auto sequence
+                        autoSequenceMessages = data.response;
+                        autoSequenceIndex = 0;
+                        displayAutoSequence();
+                    } else {
+                        // Single message
+                        displayMessage(data.response, 'bot');
+                        enableInput();
+                    }
+                } else {
+                    displayMessage('Error: ' + data.error, 'bot');
+                    enableInput();
+                }
+            } catch (error) {
+                displayMessage('Error sending message', 'bot');
+                enableInput();
+            }
+            
+            isWaitingForResponse = false;
+        }
+
+        // Display auto sequence messages
+        function displayAutoSequence() {
+            if (autoSequenceIndex < autoSequenceMessages.length) {
+                displayMessage(autoSequenceMessages[autoSequenceIndex], 'bot');
+                autoSequenceIndex++;
+                
+                // Show next message after 2 seconds
+                setTimeout(displayAutoSequence, 2000);
+            } else {
+                // Auto sequence finished, get current node message
+                getCurrentNodeMessage();
+            }
+        }
+
+        // Get current node message after auto sequence
+        async function getCurrentNodeMessage() {
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_input: "" })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.type === 'sequence') {
+                        // If there are more auto messages, continue
+                        autoSequenceMessages = data.response;
+                        autoSequenceIndex = 0;
+                        displayAutoSequence();
+                    } else {
+                        // Single message - this should be the current node message
+                        displayMessage(data.response, 'bot');
+                        enableInput();
+                    }
+                } else {
+                    displayMessage('Error: ' + data.error, 'bot');
+                    enableInput();
+                }
+            } catch (error) {
+                displayMessage('Error getting current message', 'bot');
+                enableInput();
+            }
+        }
+
+        // Display message in chat
+        function displayMessage(message, sender) {
+            const container = document.getElementById('chat-container');
+            if (Array.isArray(message)) {
+                message.forEach(msg => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${sender}-message`;
+                    messageDiv.textContent = msg;
+                    container.appendChild(messageDiv);
+                });
+            } else {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                messageDiv.textContent = message;
+                container.appendChild(messageDiv);
+            }
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Enable input
+        function enableInput() {
+            document.getElementById('user-input').disabled = false;
+            document.getElementById('send-button').disabled = false;
+            document.getElementById('user-input').focus();
+        }
+
+        // Disable input
+        function disableInput() {
+            document.getElementById('user-input').disabled = true;
+            document.getElementById('send-button').disabled = true;
+        }
+
+        // Reset chat
+        async function resetChat() {
+            try {
+                const response = await fetch('/reset', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('chat-container').innerHTML = 
+                        '<div class="message bot-message loading">Resetting...</div>';
+                    getInitialMessage();
+                }
+            } catch (error) {
+                displayMessage('Error resetting chat', 'bot');
+            }
+        }
+
+        // Handle Enter key
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

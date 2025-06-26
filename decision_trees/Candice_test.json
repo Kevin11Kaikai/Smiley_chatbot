@@ -1,0 +1,105 @@
+{
+    "flow_id": "full_user_journey_v2_en",
+    "description": "A complete chat flow with an enhanced demographic collection phase, followed by an AI-driven conversation module.",
+    "start_node": "intro_ask_name",
+  
+    "nodes": {
+      "intro_ask_name": {
+        "id": "intro_ask_name",
+        "type": "prompt",
+        "message": "Hi! I'm SMILEY 😊 It's nice to meet you. What should I call you?",
+        "collect": "name",
+        "next": "intro_ask_age"
+      },
+  
+      "intro_ask_age": {
+        "id": "intro_ask_age",
+        "type": "prompt",
+        "message": "Nice to meet you, {name}! How old are you?",
+        "collect": "age",
+        "next": "intro_ask_gender"
+      },
+  
+      "intro_ask_gender": {
+        "id": "intro_ask_gender",
+        "type": "prompt",
+        "message": "Thanks. To help me get to know you, how do you identify your gender? (e.g., boy, girl, nonbinary, etc.)",
+        "collect": "gender",
+        "next": "intro_ask_race_ethnicity" 
+      },
+      
+  
+      "intro_ask_race_ethnicity": {
+        "id": "intro_ask_race_ethnicity",
+        "type": "menu",
+        "message": "Which of the following best describes your racial or ethnic background?\n1. Black\n2. Latino / Latina / Latinx\n3. Something else\n4. Prefer not to say",
+        "options": [
+          { "id": "1", "text": "Black", "target_node": "intro_ask_sexual_identity" },
+          { "id": "2", "text": "Latino / Latina / Latinx", "target_node": "intro_ask_sexual_identity" },
+          { "id": "3", "text": "Something else", "target_node": "intro_ask_sexual_identity" },
+          { "id": "4", "text": "Prefer not to say", "target_node": "intro_ask_sexual_identity" }
+        ],
+        "collect": "race_ethnicity"
+      },
+  
+      "intro_ask_sexual_identity": {
+        "id": "intro_ask_sexual_identity",
+        "type": "menu",
+        "message": "And which of these best describes you?\n1. LGBTQ+\n2. Not LGBTQ+\n3. Questioning or unsure\n4. Prefer not to say",
+        "options": [
+          { "id": "1", "text": "LGBTQ+", "target_node": "intro_ask_interests" },
+          { "id": "2", "text": "Not LGBTQ+", "target_node": "intro_ask_interests" },
+          { "id": "3", "text": "Questioning or unsure", "target_node": "intro_ask_interests" },
+          { "id": "4", "text": "Prefer not to say", "target_node": "intro_ask_interests" }
+        ],
+        "collect": "sexual_identity"
+      },
+  
+      "intro_ask_interests": {
+        "id": "intro_ask_interests",
+        "type": "prompt",
+        "message": "Awesome, thanks for sharing. Last question to get started: What are some things you're into? (e.g., gaming, music, art, sports... anything goes!)",
+        "collect": "interests",
+        "next": "intro_transition"
+      },
+
+      "intro_transition": {
+        "id": "intro_transition",
+        "type": "statement",
+        "message": "Cool! Thanks for all that. Now, let's dive into something interesting...",
+        "next": "cultural_identity_intro"
+      },
+  
+      "cultural_identity_intro": {
+        "id": "cultural_identity_intro",
+        "type": "statement",
+        "source_text": "Embracing our connection to our culture and identity can help us accept who we are, improve our mental health, feel support from our communities, and empower us to stand up to life's challenges. Think about how you might like to learn about or connect to your identity or culture right now. If you choose one option now, you can return to another later.",
+        "next": "cultural_identity_menu"
+      },
+  
+      "cultural_identity_menu": {
+        "id": "cultural_identity_menu",
+        "type": "menu",
+        "source_text": "Here are some options for exploring your identity:\n1. Learn about what cultural identity is\n2. Reflect on your roots by creating a 'culture tree'\n3. Tips for finding your place within your culture\n4. Ideas for self-love",
+        "options": [
+          { "id": "1", "source_text": "Learn about what cultural identity is", "target_node": "branch_learn_identity" },
+          { "id": "2", "source_text": "Reflect on your roots by creating a 'culture tree'", "target_node": "branch_culture_tree" },
+          { "id": "3", "source_text": "Tips for finding your place within your culture", "target_node": "branch_finding_place" },
+          { "id": "4", "source_text": "Ideas for self-love", "target_node": "branch_self_love" }
+        ]
+      },
+  
+      "branch_self_love": {
+        "id": "branch_self_love",
+        "type": "statement",
+        "source_text": [
+          "Sometimes we're harder on ourselves than we would be on others. Self-love is about building on the compassion we have for others to appreciate ourselves. This helps us prioritize our needs and give ourselves grace to be exactly who we are.",
+          "You are enough!"
+        ],
+        "next": "cultural_identity_menu"
+      },
+      "branch_learn_identity": { "id": "branch_learn_identity", "type": "statement", "source_text": "Cultural identity is about understanding and appreciating the unique mix of traditions, values, and experiences that shape who you are. It can include your family's history, the language you speak at home, the holidays you celebrate, and the community you feel connected to. Learning about your cultural identity can help you feel more confident, proud, and connected to others who share similar backgrounds. Remember, your identity is yours to explore and define—there's no right or wrong way to connect with your culture.", "next": "cultural_identity_menu" },
+      "branch_culture_tree": { "id": "branch_culture_tree", "type": "statement", "source_text": "Creating a 'culture tree' is a fun way to reflect on your roots and what makes you unique. Imagine your life as a tree: the roots represent your family history and traditions, the trunk is your daily life and values, and the branches are your dreams and the people who support you. Try drawing your own culture tree—add roots for your family's origins, branches for your interests, and leaves for the things you love about your culture. This can help you see how your background shapes who you are today.", "next": "cultural_identity_menu" },
+      "branch_finding_place": { "id": "branch_finding_place", "type": "statement", "source_text": "Finding your place within your culture can take time, and that's totally okay. You might feel connected to some traditions but not others, or you might be exploring new parts of your identity. Try talking to family members, joining cultural clubs, or learning about your heritage online. Remember, it's normal to have questions or feel unsure sometimes. What matters most is being open to learning and finding what feels meaningful to you. Your journey is unique, and you belong just as you are.", "next": "cultural_identity_menu" }
+    }
+  }

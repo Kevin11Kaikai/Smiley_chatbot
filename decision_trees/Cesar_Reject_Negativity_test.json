@@ -1,0 +1,198 @@
+{
+    "start_node": "intro_ask_name", 
+
+    "nodes": {
+        "intro_ask_name": {
+            "id": "intro_ask_name",
+            "type": "prompt",
+            "message": "Hi! I'm SMILEY 😊 It's nice to meet you. What should I call you?",
+            "collect": "name",
+            "next": "intro_ask_age"
+        },
+        "intro_ask_age": {
+            "id": "intro_ask_age",
+            "type": "prompt",
+            "message": "Nice to meet you, {name}! How old are you?",
+            "collect": "age",
+            "next": "intro_ask_gender"
+        },
+        "intro_ask_gender": {
+            "id": "intro_ask_gender",
+            "type": "prompt",
+            "message": "Thanks. To help me get to know you, how do you identify your gender? (e.g., boy, girl, nonbinary, etc.)",
+            "collect": "gender",
+            "next": "intro_ask_race_ethnicity"
+        },
+        "intro_ask_race_ethnicity": {
+            "id": "intro_ask_race_ethnicity",
+            "type": "menu",
+            "message": "Which of the following best describes your racial or ethnic background?\n1. Black\n2. Latino / Latina / Latinx\n3. Something else\n4. Prefer not to say",
+            "options": [
+                { "id": "1", "source_text": "Black", "target_node": "intro_ask_sexual_identity" },
+                { "id": "2", "source_text": "Latino / Latina / Latinx", "target_node": "intro_ask_sexual_identity" },
+                { "id": "3", "source_text": "Something else", "target_node": "intro_ask_sexual_identity" },
+                { "id": "4", "source_text": "Prefer not to say", "target_node": "intro_ask_sexual_identity" }
+            ],
+            "collect": "race_ethnicity"
+        },
+        "intro_ask_sexual_identity": {
+            "id": "intro_ask_sexual_identity",
+            "type": "menu",
+            "message": "And which of these best describes you?\n1. LGBTQ+\n2. Not LGBTQ+\n3. Questioning or unsure\n4. Prefer not to say",
+            "options": [
+                { "id": "1", "source_text": "LGBTQ+", "target_node": "intro_ask_interests" },
+                { "id": "2", "source_text": "Not LGBTQ+", "target_node": "intro_ask_interests" },
+                { "id": "3", "source_text": "Questioning or unsure", "target_node": "intro_ask_interests" },
+                { "id": "4", "source_text": "Prefer not to say", "target_node": "intro_ask_interests" }
+            ],
+            "collect": "sexual_identity"
+        },
+        "intro_ask_interests": {
+            "id": "intro_ask_interests",
+            "type": "prompt",
+            "message": "Awesome, thanks for sharing. Last question to get started: What are some things you're into? (e.g., gaming, music, art, sports... anything goes!)",
+            "collect": "interests",
+            "next": "intro_transition"
+        },
+        "intro_transition": {
+            "id": "intro_transition",
+            "type": "statement",
+            "message": "Cool! Thanks for all that. Now, let's dive into our topic.",
+            "next": "branch_reject_negativity"
+        },
+        "branch_reject_negativity": {
+            "id": "branch_reject_negativity",
+            "type": "statement",
+            "message": "Okay, great choice! Let's talk about how to reject negativity on social media.",
+            "next": "negativity_q_intro_1"
+        },
+        "negativity_q_intro_1": {
+            "id": "negativity_q_intro_1",
+            "type": "statement",
+            "message": "First, I'm going to ask you 4 questions about whether you've experienced any negative interactions on social media because of your race, ethnicity, or sexuality.",
+            "next": "negativity_q_intro_2"
+        },
+        "negativity_q_intro_2": {
+            "id": "negativity_q_intro_2",
+            "type": "statement",
+            "message": "Your answers will help me better understand your experience on social media, and how we can best work together to make your feed more positive.",
+            "next": "negativity_q_intro_3"
+        },
+        "negativity_q_intro_3": {
+            "id": "negativity_q_intro_3",
+            "type": "statement",
+            "message": "For these 4 questions, think about your experiences on social media in the last month.",
+            "next": "negativity_q1"
+        },
+        "negativity_q1": {
+            "id": "negativity_q1",
+            "type": "menu",
+            "message": "How often were you called out or hurt by one of your social media contacts/friends because of your {race_ethnicity} or {sexual_identity} background?\n1. Never\n2. Once or twice\n3. A few times in a month\n4. About once a week\n5. More often",
+            "collect": "negativity_q1_score",
+            "options": [
+                { "id": "1", "source_text": "Never", "target_node": "negativity_q2" },
+                { "id": "2", "source_text": "Once or twice", "target_node": "negativity_q2" },
+                { "id": "3", "source_text": "A few times in a month", "target_node": "negativity_q2" },
+                { "id": "4", "source_text": "About once a week", "target_node": "negativity_q2" },
+                { "id": "5", "source_text": "More often", "target_node": "negativity_q2" }
+            ]
+        },
+        "negativity_q2": {
+            "id": "negativity_q2",
+            "type": "menu",
+            "message": "How often have you posted something and received negative feedback from your social media contacts/friends because of your {race_ethnicity} or {sexual_identity} background?\n1. Never\n2. Once or twice\n3. A few times in a month\n4. About once a week\n5. More often",
+            "collect": "negativity_q2_score",
+            "options": [
+                { "id": "1", "source_text": "Never", "target_node": "negativity_q3" },
+                { "id": "2", "source_text": "Once or twice", "target_node": "negativity_q3" },
+                { "id": "3", "source_text": "A few times in a month", "target_node": "negativity_q3" },
+                { "id": "4", "source_text": "About once a week", "target_node": "negativity_q3" },
+                { "id": "5", "source_text": "More often", "target_node": "negativity_q3" }
+            ]
+        },
+        "negativity_q3": {
+            "id": "negativity_q3",
+            "type": "menu",
+            "message": "How often have you posted something and received no feedback at all from your social media contacts/friends because of your {race_ethnicity} or {sexual_identity} background?\n1. Never\n2. Once or twice\n3. A few times in a month\n4. About once a week\n5. More often",
+            "collect": "negativity_q3_score",
+            "options": [
+                { "id": "1", "source_text": "Never", "target_node": "negativity_q4" },
+                { "id": "2", "source_text": "Once or twice", "target_node": "negativity_q4" },
+                { "id": "3", "source_text": "A few times in a month", "target_node": "negativity_q4" },
+                { "id": "4", "source_text": "About once a week", "target_node": "negativity_q4" },
+                { "id": "5", "source_text": "More often", "target_node": "negativity_q4" }
+            ]
+        },
+        "negativity_q4": {
+            "id": "negativity_q4",
+            "type": "menu",
+            "message": "How often have you seen posts or pictures that made you think you weren't invited to an activity/party among your social media contacts/friends because of your {race_ethnicity} or {sexual_identity} background?\n1. Never\n2. Once or twice\n3. A few times in a month\n4. About once a week\n5. More often",
+            "collect": "negativity_q4_score",
+            "options": [
+                { "id": "1", "source_text": "Never", "target_node": "negativity_q_thanks" },
+                { "id": "2", "source_text": "Once or twice", "target_node": "negativity_q_thanks" },
+                { "id": "3", "source_text": "A few times in a month", "target_node": "negativity_q_thanks" },
+                { "id": "4", "source_text": "About once a week", "target_node": "negativity_q_thanks" },
+                { "id": "5", "source_text": "More often", "target_node": "negativity_q_thanks" }
+            ]
+        },
+        "negativity_q_thanks": {
+            "id": "negativity_q_thanks",
+            "type": "statement",
+            "message": "Thanks for answering those questions, {name}. There are a few ways you can lower your exposure to negativity on social media.",
+            "next": "negativity_offer_video_1"
+        },
+        "negativity_offer_video_1": {
+            "id": "negativity_offer_video_1",
+            "type": "menu",
+            "message": "I have a great video on how to do this - want to see?\n1. Show me the video now\n2. Remind me later",
+            "options": [
+                { "id": "1", "source_text": "Show me the video now", "target_node": "negativity_video_1_link" },
+                { "id": "2", "source_text": "Remind me later", "target_node": "negativity_offer_pdf_flow" }
+            ]
+        },
+        "negativity_video_1_link": {
+            "id": "negativity_video_1_link",
+            "type": "statement",
+            "message": "Here it is! Watch this video: https://youtu.be/F-6Emds0VSQ?si=SeFp-2X8aRIT0vob",
+            "next": "negativity_after_video_1_finished"
+        },
+        "negativity_after_video_1_finished": {
+            "id": "negativity_after_video_1_finished",
+            "type": "menu",
+            "message": "When you're done watching the video, type 'Finished' to continue.",
+            "options": [
+                { "id": "1", "source_text": "Finished", "target_node": "negativity_offer_pdf_flow" }
+            ]
+        },
+        "negativity_offer_pdf_flow": {
+            "id": "negativity_offer_pdf_flow",
+            "type": "menu",
+            "source_text": "Some teens like yourself gave some tips that might help reduce these negative experiences. Do you want to hear them?\n1. Show me tips\n2. No thanks, let's continue",
+            "options": [
+                { "id": "1", "source_text": "Show me tips", "target_node": "pdf_flow_negativity_bias" },
+                { "id": "2", "source_text": "No thanks, let's continue", "target_node": "negativity_summary_1" }
+            ]
+        },
+        "pdf_flow_negativity_bias": { "id": "pdf_flow_negativity_bias", "type": "statement", "source_text": "If you tend to focus on the bad things more than the good, you are not alone. This is the negativity bias, and it is completely normal. For example, due to the negativity bias, you might overthink a mean comment someone left on your post more than you think about a new friend following you back.", "next": "pdf_flow_little_things" },
+        "pdf_flow_little_things": { "id": "pdf_flow_little_things", "type": "statement", "source_text": ["Our brains may dwell on the small, negative things, but we can also appreciate the small, positive things.", "Make sure to acknowledge the things that make you happy, no matter how small. For example, next time you are on social media, pay attention to the good things that happen, like adding a new friend, your friends reacting well to a funny video you sent, or your crush liking one of your posts."], "next": "pdf_flow_algorithm_intro" },
+        "pdf_flow_algorithm_intro": { "id": "pdf_flow_algorithm_intro", "type": "statement", "source_text": "We all know that social media uses algorithms to keep us on the app. But that doesn't mean we can't make it work for us. You can actually use the algorithm to boost positive posts on your feed.", "next": "pdf_flow_safe_space" },
+        "pdf_flow_safe_space": { "id": "pdf_flow_safe_space", "type": "statement", "source_text": "Finally, remember to curate a safe space. As a rule of thumb, you should report content that encourages harm to yourself or others, or promotes unhealthy habits. And remember, blocking is always a valid option to protect your peace.", "next": "negativity_summary_1" },
+        "negativity_summary_1": {
+            "id": "negativity_summary_1",
+            "type": "statement",
+            "source_text": [
+                "Our brain sometimes focuses more on the negative than on the positive. Being aware of it is a good first step to start focusing more on the positive experiences you have on social media.",
+                "Don't forget, most social media apps have settings you can use to reduce the negativity you see on your feed, like turning off comments, unfollowing someone, or blocking a specific contact.",
+                "Those tools exist for a reason! You're allowed to make your experience exactly what you want it to be."
+            ],
+            "next": "reject_negativity_conclusion"
+        },
+
+        "reject_negativity_conclusion": {
+            "id": "reject_negativity_conclusion",
+            "type": "statement",
+            "message": "You've learned some great ways to take control of your social media feed! We can explore another topic or end here for today."
+        }
+    }
+}
